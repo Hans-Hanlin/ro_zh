@@ -8,7 +8,7 @@
    ```
    javascript:import('https://hans-hanlin.github.io/ro_zh/ro_zh.js?v='+Date.now())
    ```
-2. 打開 https://ro-survivors.com/ ，點一下書籤。畫面變中文、右下角出現「中」就成功。
+2. 打開 https://ro-survivors.com/ ，點一下書籤。畫面變中文、右下角出現「中」、左下角出現「改」（修改器）就成功。
    每次重新整理頁面後要再點一次書籤。
 3. 書籤每次都會抓最新版，作者更新後不用重裝。
 
@@ -23,8 +23,9 @@
 - 不碰伺服器：只改你自己瀏覽器裡的語言設定。離開頁面時會把遊戲存檔裡的語言改回原本的，
   所以沒點書籤時遊戲照常顯示英文／西文。
 
-## 測試用修改器（ro_mod.js V1.1）
-- 書籤：`javascript:import('https://hans-hanlin.github.io/ro_zh/ro_mod.js?v='+Date.now())`
+## 測試用修改器（V1.1，已內建在同一個書籤）
+- 不用另外裝：點上面那個書籤，左下角就會出現「改」。
+  （只想要修改器、不要中文化的話，也可以單獨用 `javascript:import('https://hans-hanlin.github.io/ro_zh/ro_mod.js?v='+Date.now())`）
 - 朋友群組測試用：訪客、離線、登入帳號、組隊**都可以用**。面板狀態列會顯示目前是 [訪客] / [帳號] / [・組隊]。
 - 點左下「改」打開面板（進到一局後會自動抓到遊戲）：
   - 無敵

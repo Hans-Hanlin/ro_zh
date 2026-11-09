@@ -17,5 +17,13 @@ const out = src
   .replace('/*__NAMES__*/[]', () => JSON.stringify(names))
   .replace('/*__ZH_TABLE__*/{}', () => JSON.stringify(zh))
   .replace('{/*__HAND_DICT__*/}', () => '{' + hand + '\n  }');
-fs.writeFileSync(path.join(ROOT, 'ro_zh.js'), out);
-console.log('ro_zh.js', (Buffer.byteLength(out) / 1024).toFixed(0) + ' KB,', Object.keys(zh).length, 'entries');
+// 合併修改器：ro_mod.js 原樣接在後面（ro_mod.js 本身仍可當獨立書籤用）
+const mod = fs.readFileSync(path.join(ROOT, 'ro_mod.js'), 'utf8');
+if (!mod.includes('__ROMOD_BUNDLED__')) throw new Error('ro_mod.js 缺 BUNDLED 判斷');
+const bundle = out.replace(/\s*$/, '\n') +
+  '\n// ======================================================================\n' +
+  '// 以下為測試用修改器（由 tools/build.js 從 ro_mod.js 合併進來）\n' +
+  '// ======================================================================\n' +
+  'const __ROMOD_BUNDLED__ = true;\n' + mod;
+fs.writeFileSync(path.join(ROOT, 'ro_zh.js'), bundle);
+console.log('ro_zh.js', (Buffer.byteLength(bundle) / 1024).toFixed(0) + ' KB,', Object.keys(zh).length, 'entries（含修改器）');

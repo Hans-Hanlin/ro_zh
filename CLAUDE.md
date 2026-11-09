@@ -24,7 +24,7 @@ i18n/unify.json    ← 統一譯名替換（平行翻譯用詞不一致時加在
 i18n/overrides.json← 手動修正（最優先）
 tools/merge_zh.js  → i18n/zh-TW.json
 tools/build.js     → ro_zh.js（部署檔，勿手改）
-ro_mod.js          ← 修改器（單檔，直接改）
+ro_mod.js          ← 修改器（單檔，直接改；build.js 會把它整段合併進 ro_zh.js → 一個書籤兩者都有）
 建置.bat           = merge + build + 語法檢查
 ```
 

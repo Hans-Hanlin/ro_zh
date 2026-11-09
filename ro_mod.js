@@ -7,9 +7,11 @@
 // （soul_linker-*.js）裡、可經由它 export 的子類別拿到 prototype，掛一層就能拿到本局的 game 物件。
 // 修改都套在 game.stats（每次 recomputeStats 會換新物件，所以每幀依「原始值 × 倍率」重算）。
 void (async function ROMOD() {
-  if (window.__ROMOD) { window.__ROMOD.panel(true); return; }
+  // BUNDLED：合併在 ro_zh.js 裡時，由中文化那段負責「重按書籤」與「網站不對」的提示，這裡安靜略過
+  const BUNDLED = typeof __ROMOD_BUNDLED__ !== 'undefined';
+  if (window.__ROMOD) { if (!BUNDLED) window.__ROMOD.panel(true); return; }
   const HOST_OK = /(^|\.)ro-survivors\.com$/.test(location.hostname) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || window.__ROMOD_FORCE;
-  if (!HOST_OK) { alert('請在 https://ro-survivors.com/ 按這個書籤。'); return; }
+  if (!HOST_OK) { if (!BUNDLED) alert('請在 https://ro-survivors.com/ 按這個書籤。'); return; }
   const VERSION = 'V1.1';
   const CFG_KEY = 'romod:cfg';
 
