@@ -15,7 +15,7 @@ void (async function ROZH() {
   const HOST_OK = /(^|\.)ro-survivors\.com$/.test(location.hostname) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || window.__ROZH_FORCE;
   if (!HOST_OK) { alert('請在 RO Survivors 遊戲頁面（https://ro-survivors.com/）按這個書籤。'); return; }
 
-  const VERSION = 'V2';
+  const VERSION = 'V2.1';
   const LANG = 'zh-TW';
   const LANG_NAME = '繁體中文';
   const PREV_KEY = 'rozh:prevLang';
@@ -80,32 +80,39 @@ void (async function ROZH() {
     get(t, k) {
       if (typeof k !== 'string') return undefined;
       if (hasOwn(t, k)) return t[k];
+      if (OFFICIAL && hasOwn(OFFICIAL, k)) return OFFICIAL[k];
       noteMissing(k);
       return EN && hasOwn(EN, k) ? EN[k] : undefined;
     },
-    has(t, k) { return hasOwn(t, k) || (!!EN && hasOwn(EN, k)); },
+    has(t, k) { return hasOwn(t, k) || (!!OFFICIAL && hasOwn(OFFICIAL, k)) || (!!EN && hasOwn(EN, k)); },
   });
 
+  // 遊戲 2026-11-09 改版起內建官方 zh-TW（jS 已經有自己的 'zh-TW' 表）。
+  // 這時改成「我們的表優先、官方表補缺」：官方有、我們沒有的新字串直接用官方中文。
+  let OFFICIAL = null;
   function inject() {
     if (!api) return false;
     const S = api.settings;
-    // jS[Ta.lang] 查不到 zh-TW 時會往 Object.prototype 找 —— 暫時放一個 getter 攔住，認出 jS 後直接把表放進去
-    Object.defineProperty(Object.prototype, LANG, {
+    // jS[Ta.lang] 查不到語言時會往 Object.prototype 找 —— 暫時放一個 getter 攔住，認出 jS（{es:null, en:{…}}）。
+    // 用一個遊戲沒有的暫時代號觸發，官方已內建 zh-TW 時也攔得到。
+    const PROBE = '__rozh_probe__';
+    let holder = null;
+    Object.defineProperty(Object.prototype, PROBE, {
       configurable: true, enumerable: false,
       get() {
-        if (this && hasOwn(this, 'es') && hasOwn(this, 'en') && this.es === null && this.en && typeof this.en === 'object') {
-          EN = this.en;
-          Object.defineProperty(this, LANG, { value: TABLE, writable: true, enumerable: true, configurable: true });
-          injected = true;
-          return TABLE;
-        }
+        if (this && hasOwn(this, 'es') && hasOwn(this, 'en') && this.es === null && this.en && typeof this.en === 'object') holder = this;
         return undefined;
       },
-      set(v) { Object.defineProperty(this, LANG, { value: v, writable: true, enumerable: true, configurable: true }); },
     });
     const prev = S.lang;
-    try { S.lang = LANG; api.t('Cerrar'); } finally { S.lang = prev; }
-    delete Object.prototype[LANG];
+    try { S.lang = PROBE; api.t('Cerrar'); } catch (_) {} finally { S.lang = prev; delete Object.prototype[PROBE]; }
+    if (holder) {
+      EN = holder.en;
+      const off = holder[LANG];
+      if (off && typeof off === 'object' && off !== TABLE) OFFICIAL = off;
+      Object.defineProperty(holder, LANG, { value: TABLE, writable: true, enumerable: true, configurable: true });
+      injected = true;
+    }
     if (!injected) return false;
     for (const [es, en] of Object.entries(EN)) if (typeof en === 'string' && hasOwn(ZH, es) && !REV.has(en)) REV.set(en, ZH[es]);
     // 語言清單加上繁中（選項面板 / 左上語言選單會用到）
@@ -131,8 +138,11 @@ void (async function ROZH() {
   if (api && inject()) {
     mode = 'i18n';
     switchToZh();
-    addEventListener('pagehide', restoreStoredLang);
-    addEventListener('beforeunload', restoreStoredLang);
+    // 官方已內建 zh-TW 時，存檔裡的 zh-TW 沒裝書籤也能用，就不用改回去
+    if (!OFFICIAL) {
+      addEventListener('pagehide', restoreStoredLang);
+      addEventListener('beforeunload', restoreStoredLang);
+    }
   } else {
     console.warn('[RO 中文化] 找不到遊戲 i18n 模組，改用 DOM 替換模式（翻譯會比較不完整）。');
   }
@@ -164,6 +174,14 @@ void (async function ROZH() {
     if (t.includes(' · ')) {
       const parts = t.split(' · '), outp = parts.map(p => { const z = lookup(p, false); return z === null ? p : z; });
       if (outp.some((p, i) => p !== parts[i])) return outp.join(' · ');
+    }
+    // 「· Poring」這種前置分隔點（清單項目）：去掉點再查名字
+    const dot = t.match(/^([·•]\s*)(.+)$/);
+    if (dot) { const z = lookup(dot[2], false); if (z !== null) return dot[1] + z; }
+    // 帶數字的字串：數字換成 {0}{1}… 查模板，再把數字填回去（「12 / 340 EXP」→ 模板「{0} / {1} EXP」）
+    if (/\d/.test(t)) {
+      const n = normNum(t);
+      if (n !== t && hasOwn(ZH, n)) { const nums = t.match(NUM); return ZH[n].replace(/\{(\d+)\}/g, (m, i) => nums[+i] ?? m); }
     }
     if (record && !/^(https?:|mailto:|@)/.test(t)) noteMissing(t);
     return null;
@@ -269,7 +287,7 @@ void (async function ROZH() {
   panel.id = 'rozh-panel';
   panel.innerHTML = `<header><b></b><button data-a="toggle"></button><button data-a="refresh">重新整理</button><button data-a="copy">複製</button><button data-a="close">✕</button></header>
     <textarea readonly spellcheck="false"></textarea>
-    <small>模式：${mode === 'i18n' ? '遊戲內建語言（完整）' : 'DOM 替換（備援）'}。下面是畫面出現過、繁中表還沒有的字串（JSON）。複製貼給 AI 翻好後放進 i18n/overrides.json 重新 build。</small>`;
+    <small>模式：${mode === 'i18n' ? (OFFICIAL ? '我們的譯名優先＋官方繁中補缺' : '遊戲內建語言（完整）') : 'DOM 替換（備援）'}。下面是畫面出現過、繁中表還沒有的字串（JSON）。複製貼給 AI 翻好後放進 i18n/overrides.json 重新 build。</small>`;
   document.body.append(btn, panel);
   const ta = panel.querySelector('textarea');
   function refresh() {
@@ -298,6 +316,6 @@ void (async function ROZH() {
     }
   };
 
-  window.__ROZH = { version: VERSION, mode, zh: ZH, en: () => EN, missing, walk, panel: showPanel, api };
+  window.__ROZH = { version: VERSION, mode, official: () => OFFICIAL, zh: ZH, en: () => EN, missing, walk, panel: showPanel, api };
   console.log(`[RO 中文化] ${VERSION} 已啟動（${mode} 模式，表 ${Object.keys(ZH).length} 條）。缺字：window.__ROZH.missing`);
 })();

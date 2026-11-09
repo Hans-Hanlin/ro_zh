@@ -3,7 +3,7 @@
 ## 🎯 這是什麼
 https://ro-survivors.com （仙境傳說同人 survivors 網頁遊戲，作者 Reven4nt）的兩支書籤（bookmarklet）：
 - **ro_zh.js** — 繁體中文化（V2：直接把繁中表注入遊戲內建 i18n）
-- **ro_mod.js** — 測試用修改器（V1.1：固定選單；全模式開放）
+- **ro_mod.js** — 測試用修改器（V2.0：A 能力值／B 對局／C 進階 三分頁；全模式開放）
 
 從網頁版 Claude 搬來桌機續做（2026-11-09）。
 部署：repo `Hans-Hanlin/ro_zh`（GitHub Pages）→ `https://hans-hanlin.github.io/ro_zh/ro_zh.js`。push 到 main 約 1 分鐘生效。
@@ -28,7 +28,12 @@ ro_mod.js          ← 修改器（單檔，直接改；build.js 會把它整段
 建置.bat           = merge + build + 語法檢查
 ```
 
-## 🔑 遊戲內部關鍵（2026-11-08 版 d040737，改版後可能要重查）
+## 🔑 遊戲內部關鍵（2026-11-08 版 d040737 → 2026-11-09 版 soul_linker-ByEA5qXF 仍適用，改版後可能要重查）
+- **2026-11-09 起遊戲內建官方 zh-TW**（`jS['zh-TW']` 已存在）。書籤改用暫時語言代號觸發 getter 抓 jS，
+  把 zh-TW 換成「我們的表 → 官方表 → 英文」的 Proxy。比對見 `docs/官方繁中比對.md`。
+- 新版進廣場會先跳「中文頻道」詢問（e2e 要先點「稍後再說」再按空白鍵）。
+- 修改器 V2 用到的 game 方法：`runItems.apply`（六圍等 pre 層）、`recomputeStats`、`debugStart(t, god)`（時間跳躍）、
+  `netKilled`（清怪）、`advance(dt)`（主迴圈，加速）、`freshChoices/upgradeChoices/rollChoices`（選卡）、`perksLeft/perksMax`。
 - 共用模組 `build/soul_linker-*.js` export 了：設定物件 `Ta`（有 lang/music/sfx）、設定函式 `XM`（Object.assign+localStorage+通知）、翻譯函式 `bt`（查 `jS[Ta.lang]`）、語言清單 `vj`。**書籤靠「形狀」找，不靠縮寫名**（縮寫每次 build 都會變）。
 - `jS = {es:null, en:L6}`；zh 表是暫時在 Object.prototype 放 getter 攔到 jS 後直接塞進去，隨即移除 getter。
 - 存檔語言 key：`ro-survivors:settings`；離開頁面時書籤會把 lang 改回原本的（避免沒裝書籤時變西文）。

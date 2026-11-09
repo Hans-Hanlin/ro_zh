@@ -1,4 +1,10 @@
 {
  "_說明": "手動修正譯文（最優先，會覆蓋 AI 翻譯）。格式：\"西文原文 key\": \"中文\"。改完執行 node tools/merge_zh.js && node tools/build.js",
- "min": "出現"
+ "min": "出現",
+ "Beta {0}.{1}.{2}": "Beta {0}.{1}.{2}",
+ "Beta {0}.{1}": "Beta {0}.{1}",
+ "{0} / {1} EXP": "{0} / {1} EXP",
+ "{0}.{1} HP/s": "{0}.{1} HP/秒",
+ "Base Lv {0} · Job Lv {1}": "Base Lv {0} · Job Lv {1}",
+ "Base Lv {0}": "Base Lv {0}"
 }

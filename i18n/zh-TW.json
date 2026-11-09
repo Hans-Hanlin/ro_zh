@@ -6644,5 +6644,11 @@
  "Penomena Card": "佩諾梅娜卡片",
  "Yao Jun Card": "妖君卡片",
  "King Dramoh Card": "龍蝦王卡片",
- "Kraken Card": "大海怪卡片"
+ "Kraken Card": "大海怪卡片",
+ "Beta {0}.{1}.{2}": "Beta {0}.{1}.{2}",
+ "Beta {0}.{1}": "Beta {0}.{1}",
+ "{0} / {1} EXP": "{0} / {1} EXP",
+ "{0}.{1} HP/s": "{0}.{1} HP/秒",
+ "Base Lv {0} · Job Lv {1}": "Base Lv {0} · Job Lv {1}",
+ "Base Lv {0}": "Base Lv {0}"
 }
