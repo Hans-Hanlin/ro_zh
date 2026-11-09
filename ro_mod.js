@@ -1,4 +1,4 @@
-// ===== RO Survivors 測試用修改器 V1 =====
+// ===== RO Survivors 測試用修改器 V1.1 =====
 // 書籤：javascript:import('https://hans-hanlin.github.io/ro_zh/ro_mod.js?v='+Date.now())
 //
 // 朋友群組測試用：訪客、離線、登入帳號、組隊都可以用（不鎖）。狀態列只顯示目前模式。

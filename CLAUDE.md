@@ -5,7 +5,9 @@ https://ro-survivors.com （仙境傳說同人 survivors 網頁遊戲，作者 R
 - **ro_zh.js** — 繁體中文化（V2：直接把繁中表注入遊戲內建 i18n）
 - **ro_mod.js** — 測試用修改器（V1.1：固定選單；全模式開放）
 
-從網頁版 Claude 搬來桌機續做（2026-11-09）。原始交接見 `HANDOFF.md`。
+從網頁版 Claude 搬來桌機續做（2026-11-09）。
+部署：repo `Hans-Hanlin/ro_zh`（GitHub Pages）→ `https://hans-hanlin.github.io/ro_zh/ro_zh.js`。push 到 main 約 1 分鐘生效。
+（gh CLI 顯示的帳號名 langlive04-crypto 是舊名，實際 login 是 Hans-Hanlin。）原始交接見 `HANDOFF.md`。
 
 ## 📖 Session Start：先讀
 1. `開發日誌.md` — 進度與決策

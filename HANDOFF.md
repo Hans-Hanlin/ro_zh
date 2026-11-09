@@ -8,7 +8,8 @@
 > - 下方 §2 的 V1／V0 描述與 §4 待辦保留作為歷史紀錄。
 > - ✅ §1「修改器只在訪客／離線解鎖」已**作廢**（當初誤以為是對外營利用）。使用者確認：這是朋友群組使用的測試工具，
 >   以 §6 為準，**訪客／離線／登入／組隊全部開放**（ro_mod.js V1.1）。
-> - 剩下：§4 第 5 步（架 GitHub Pages、README 圖文教學）與譯名人工校對（`docs/譯名待確認.md`）。
+> - §4 第 5 步已完成：https://hans-hanlin.github.io/ro_zh/ （repo `Hans-Hanlin/ro_zh`）。
+> - 剩下：譯名人工校對（`docs/譯名待確認.md`）。
 
 ## 1. 目標
 把 https://ro-survivors.com （Ragnarok Online 同人 survivors 網頁遊戲）做成：
