@@ -1,0 +1,8 @@
+# 研究用下載的遊戲原始檔（作者的程式碼，不要推上公開 repo）
+_research/
+# 翻譯暫存
+i18n/chunks/
+node_modules/
+__pycache__/
+*.pyc
+.claude/settings.local.json
