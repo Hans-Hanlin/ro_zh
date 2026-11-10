@@ -19,6 +19,18 @@ const out = src
   .replace('{/*__HAND_DICT__*/}', () => '{' + hand + '\n  }');
 // 合併修改器：ro_mod.js 原樣接在後面（ro_mod.js 本身仍可當獨立書籤用）
 const mod = fs.readFileSync(path.join(ROOT, 'ro_mod.js'), 'utf8');
+// 2026-11-10 起書籤停止中文化（遊戲已內建官方繁中；我們的翻譯改成直接整合進本地伺服器的遊戲，見 tools/patch_zh_local.js）。
+// 書籤網址不變，ro_zh.js 只剩修改器。要恢復書籤中文化：把下面改成 true 再跑 建置.bat。
+const ZH_IN_BOOKMARK = false;
+if (!ZH_IN_BOOKMARK) {
+  const only = [
+    '// ===== RO Survivors 書籤（ro_zh.js）=====',
+    '// 2026-11-10 起只含測試用修改器：中文化已停用（遊戲內建官方繁中；本地伺服器版直接整合我們的翻譯）。',
+    '// 本檔由 tools/build.js 產生，請改 ro_mod.js。', '', ''].join('\n') + mod;
+  fs.writeFileSync(path.join(ROOT, 'ro_zh.js'), only);
+  console.log('ro_zh.js', (Buffer.byteLength(only) / 1024).toFixed(0) + ' KB（只含修改器，中文化停用）');
+  return;
+}
 if (!mod.includes('__ROMOD_BUNDLED__')) throw new Error('ro_mod.js 缺 BUNDLED 判斷');
 const bundle = out.replace(/\s*$/, '\n') +
   '\n// ======================================================================\n' +
